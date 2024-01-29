@@ -13,13 +13,10 @@ module.exports = class User extends Sequelize.Model {
             type: DataTypes.STRING,
             allowNull: false
           },
-        password: {
-          type: Sequelize.STRING(100),
-          allowNull: true,
-        },
         token: {
             type: DataTypes.STRING,
-            allowNull: false
+            allowNull: true,
+            defaultValue: null
           }
       }, {
         sequelize,
