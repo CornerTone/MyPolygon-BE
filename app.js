@@ -13,7 +13,9 @@ sequelize.sync({ force: false })
 
 
 const app = express();
-const port = 3000
+const port = 3000;
+
+app.set('port', port); // 포트 설정
 
 app.get('/', (req, res) => res.json('Hello world'));
 
