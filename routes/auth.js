@@ -10,7 +10,6 @@ const router = express.Router();
 // 회원가입
 router.post('/join', async (req, res) => { 
     try {
-        console.log(req.body)
         const { nickname, password, password2 } = req.body;
         const exUser = await User.findOne({ where: { nickname } });
         if (exUser) {
@@ -30,7 +29,7 @@ router.post('/join', async (req, res) => {
         return res.status(200).json({ success: true , message: "회원가입 성공"});
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ success: false, message: "서버 오류 발생" });
+        return res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message }` });
     }
 });
 
@@ -61,12 +60,12 @@ router.post('/login', async (req, res) => {
             .status(200)
             .json({
                 success: true,
-                userId: user.id
+                userId: token
             });
 
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ success: false, message: "서버 오류 발생" });
+        return res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message }` });
     }
 });
 
@@ -95,7 +94,7 @@ router.get('/logout', auth, async (req, res) => {
         });
     } catch (err) {
         console.error(err);
-        return res.status(500).json({ success: false, message: "서버 오류 발생" });
+        return res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message }` });
     }
 });
 
