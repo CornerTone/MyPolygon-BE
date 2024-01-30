@@ -59,4 +59,43 @@ router.get('/read/:id', auth, async (req, res) => {
     }
 });
 
+// 칭찬일기 수정
+router.put('/update/:id', auth, async (req, res) => {
+    try {
+        const { content, emotion } = req.body;
+        const user = req.user;
+        const complimentId = req.params.id;
+        // id에 해당하는 칭찬일기 글 가져옴 
+        const userCompliments = await Compliment.findByPk(complimentId);
+
+        // 수정 
+        userCompliments.content = content;
+        userCompliments.emotion = emotion;
+        userCompliments.save();
+        res.json({ success: true, message: userCompliments });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
+
+// 칭찬일기 삭제
+router.delete('/delete/:id', auth, async (req, res) => {
+    try {
+        const { content, emotion } = req.body;
+        const user = req.user;
+        const complimentId = req.params.id;
+        // id에 해당하는 칭찬일기 글 가져옴 
+        const userCompliments = await Compliment.findByPk(complimentId);
+        
+        // 삭제
+        userCompliments.destroy();
+
+        res.json({ success: true, message: "성공적으로 삭제되었습니다"});
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
+
 module.exports = router;
