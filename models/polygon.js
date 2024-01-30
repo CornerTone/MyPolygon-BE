@@ -21,7 +21,8 @@ module.exports = class Polygon extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Polygon.hasMany(db.Element, { as: 'elements' });
+        db.Polygon.hasMany(db.PolygonElement, { as: 'elements' });
+        db.Polygon.belongsTo(db.User); 
     }
 }
 

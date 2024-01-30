@@ -6,6 +6,7 @@ const { sequelize } = require('./models');
 const authRouter = require('./routes/auth');
 const polygonRouter = require('./routes/polygon');
 const elementRouter = require('./routes/element');
+const complimentRouter = require('./routes/compliment');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -33,6 +34,7 @@ app.use(cookieParser());
 app.use('/api/auth', authRouter);
 app.use('/api/polygon',polygonRouter);
 app.use('/api/element', elementRouter);
+app.use('/api/compliment',complimentRouter);
 
 app.use((req, res, next) => {
   return res.json({
