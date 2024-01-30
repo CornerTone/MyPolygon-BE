@@ -1,6 +1,6 @@
 const { DataTypes, Model, Sequelize } = require('sequelize');
 
-module.exports = class Element extends Sequelize.Model {
+module.exports = class PolygonElement extends Sequelize.Model {
     static init(sequelize) {
         return super.init({
         name: {
@@ -8,15 +8,16 @@ module.exports = class Element extends Sequelize.Model {
             allowNull: true,
             unique: true,
         },
-        questions: {
-            type: DataTypes.JSON,
-            allowNull: false
+        score: {
+            type: DataTypes.INTEGER,
+            allowNull: true,
+            defaultValue: 0
         }
       }, {
         sequelize,
         underscored: false,
-        modelName: 'element',
-        tableName: 'elements',
+        modelName: 'polygon_element',
+        tableName: 'polygon_elements',
         charset: 'utf8',
         collate: 'utf8_general_ci',
         timestamps: false
@@ -24,7 +25,6 @@ module.exports = class Element extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Element.belongsTo(db.User); // Element는 하나의 User에 속함
-        // db.Element.belongsTo(db.Polygon); // Element는 하나의 Polygon에 속함
+        db.Element.belongsTo(db.Polygon); // Element는 하나의 Polygon에 속함
     }
 }

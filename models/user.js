@@ -37,6 +37,7 @@ module.exports = class User extends Sequelize.Model {
     static associate(db) {
         db.User.hasMany(db.Element, { as: 'elements' });
         db.User.hasMany(db.Polygon, { as: 'polygons' });
+        db.User.hasMany(db.Compliment, { as: 'compliemnts' });
     }
 }
 
