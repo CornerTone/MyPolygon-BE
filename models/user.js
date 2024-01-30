@@ -9,6 +9,10 @@ module.exports = class User extends Sequelize.Model {
             type: DataTypes.STRING,
             allowNull: false
           },
+          phone_number: {
+            type: DataTypes.STRING,
+            allowNull: false
+          },
           password: {
             type: DataTypes.STRING,
             allowNull: false

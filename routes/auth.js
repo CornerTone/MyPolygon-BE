@@ -10,7 +10,7 @@ const router = express.Router();
 // 회원가입
 router.post('/join', async (req, res) => { 
     try {
-        const { nickname, password, password2 } = req.body;
+        const { nickname, phone_number, password, password2 } = req.body;
         const exUser = await User.findOne({ where: { nickname } });
         if (exUser) {
             return res.status(400).json({ success: false, message: "닉네임이 이미 존재합니다" });
@@ -23,6 +23,7 @@ router.post('/join', async (req, res) => {
         const hash = await bcrypt.hash(password, 12);
         await User.create({
             nickname,
+            phone_number,
             password: hash
         });
 
@@ -70,8 +71,13 @@ router.post('/login', async (req, res) => {
 });
 
 // auth 미들웨어 -> req.user에 현재 로그인한 유저 정보가 담김 
-router.get('/test', auth, (req, res) => {
-    return res.json({ user: req.user.nickname });
+// 사용자 정보 조회
+router.get('/user-info', auth, (req, res) => {
+    return res.json({ 
+        success: true,
+        nickname: req.user.nickname,
+        phone_number: req.user.phone_number,
+    });
 });
 
 // 로그아웃
