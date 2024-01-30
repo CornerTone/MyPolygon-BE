@@ -72,13 +72,26 @@ router.post('/login', async (req, res) => {
 
 // auth 미들웨어 -> req.user에 현재 로그인한 유저 정보가 담김 
 // 사용자 정보 조회
-router.get('/user-info', auth, (req, res) => {
-    return res.json({ 
-        success: true,
-        nickname: req.user.nickname,
-        phone_number: req.user.phone_number,
-    });
+router.get('/user-info', auth, async (req, res) => {
+    try {
+        const user = req.user;
+        const elements = await user.getElements({
+            attributes: ['id', 'name']
+        });
+
+        return res.json({ 
+            success: true,
+            elements: elements // element의 id, name만 전달
+        });
+    } catch (error) {
+        return res.status(500).json({ 
+            success: false,
+            message: `서버 오류 발생: ${error.message}`
+        });
+    }
 });
+
+
 
 // 로그아웃
 router.get('/logout', auth, async (req, res) => {

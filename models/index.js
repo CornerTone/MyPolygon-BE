@@ -24,7 +24,7 @@ const db = {
     Polygon: Polygon.init(sequelize),
     User: User.init(sequelize),
     Compliment: Compliment.init(sequelize),
-    UserActivity : UserActivity.init(sequelize),
+    UserActivity: UserActivity.init(sequelize),
 
 };
 
