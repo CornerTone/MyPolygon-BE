@@ -27,6 +27,6 @@ module.exports = class Compliment extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Compliment.hasMany(db.Compliment, { as: 'compliments' });
+        db.Compliment.belongsTo(db.User);
     }
 }

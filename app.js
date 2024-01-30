@@ -11,6 +11,8 @@ const complimentRouter = require('./routes/compliment');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
+process.env.TZ = 'Asia/Seoul'; // 시간 수정 필요 
+
 sequelize.sync({ force: false }) // true 면 데이터베이스 재생성, false면 데이터베이스 변하지 않음 => true로 db모두 지우고 false로 바꿔서 디비 초기화로 사용중..
   .then(() => {
     console.log('데이터베이스 연결 성공');
