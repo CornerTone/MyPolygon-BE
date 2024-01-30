@@ -23,7 +23,7 @@ module.exports = class UserActivity extends Sequelize.Model {
             },
             {
                 sequelize,
-                modelName: 'UserActivity',
+                modelName: 'user_acttivity',
                 tableName: 'user_activities',
                 timestamps: false // timestamps를 사용하지 않을 경우
             }
