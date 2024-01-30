@@ -7,6 +7,7 @@ const auth = require('../middleware/auth');
 const express = require('express');
 const router = express.Router();
 
+// 요소 설정 
 router.post('/set-element', auth,  async (req, res) => {
     try {
         const { elements } = req.body; 
@@ -22,6 +23,26 @@ router.post('/set-element', auth,  async (req, res) => {
     }
 })
 
+// 요소 수정
+router.put('/update-element', auth, async (req, res) => {
+    try {
+        const { elements } = req.body; 
+        const user = req.user;
+
+        // 사용자가 연결된 요소 끊음 
+        await user.setElements([]);
+        // 새로운 요소 연결
+        await user.addElements(elements);
+
+        res.status(200).json({ success: true, message: `${user.nickname}님이 선택하신 요소 업데이트 성공` });
+        
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
+
+
+// 다각형 생성 
 router.post('/create', auth, async (req, res) => {
     try{
         const user = req.user;
