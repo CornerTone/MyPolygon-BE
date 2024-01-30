@@ -14,6 +14,8 @@ const User = require('./user');
 
 const Compliment = require('./compliment');
 
+const UserActivity = require('./user_activities');
+
 // 모델 정의
 const db = {
     sequelize,
@@ -22,6 +24,7 @@ const db = {
     Polygon: Polygon.init(sequelize),
     User: User.init(sequelize),
     Compliment: Compliment.init(sequelize),
+    UserActivity : UserActivity.init(sequelize),
 
 };
 
@@ -31,5 +34,6 @@ Polygon.associate(db);
 User.associate(db);
 Compliment.associate(db);
 PolygonElement.associate(db);
+UserActivity.associate(db);
 
 module.exports = db;

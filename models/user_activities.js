@@ -30,7 +30,8 @@ module.exports = class UserActivity extends Sequelize.Model {
         );
     }
 
-    static associate(models) {
+    static associate(db) {
         // UserActivity 모델과 다른 모델 간의 관계를 정의할 수 있음
+        db.UserActivity.belongsTo(db.User);
     }
 };
