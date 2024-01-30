@@ -27,6 +27,7 @@ module.exports = class User extends Sequelize.Model {
         paranoid: true,
         charset: 'utf8',
         collate: 'utf8_general_ci',
+        timestamps: false // created_at, updated_at 필드 추가되지 않도록 함 
       });
     }
     static associate(db) {

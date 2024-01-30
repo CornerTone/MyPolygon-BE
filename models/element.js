@@ -27,6 +27,7 @@ module.exports = class Element extends Sequelize.Model {
         tableName: 'elements',
         charset: 'utf8',
         collate: 'utf8_general_ci',
+        timestamps: false
       });
     }
 
