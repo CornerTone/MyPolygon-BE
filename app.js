@@ -7,14 +7,14 @@ const authRouter = require('./routes/auth');
 const polygonRouter = require('./routes/polygon');
 const elementRouter = require('./routes/element');
 const complimentRouter = require('./routes/compliment');
-const user_activitiesRouter = require('./routes/user_activities');
+const timeInvestmentRouter = require('./routes/timeInvestment');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
 
 process.env.TZ = 'Asia/Seoul'; // 시간 수정 필요 
 
-sequelize.sync({ force: false }) // true 면 데이터베이스 재생성, false면 데이터베이스 변하지 않음 => true로 db모두 지우고 false로 바꿔서 디비 초기화로 사용중..
+sequelize.sync({ force: true }) // true 면 데이터베이스 재생성, false면 데이터베이스 변하지 않음 => true로 db모두 지우고 false로 바꿔서 디비 초기화로 사용중..
   .then(() => {
     console.log('데이터베이스 연결 성공');
   })
@@ -38,7 +38,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/polygon',polygonRouter);
 app.use('/api/element', elementRouter);
 app.use('/api/compliment',complimentRouter);
-app.use('/api/user_activities',user_activitiesRouter);
+app.use('/api/timeInvestment',timeInvestmentRouter);
 
 app.use((req, res, next) => {
   return res.json({
