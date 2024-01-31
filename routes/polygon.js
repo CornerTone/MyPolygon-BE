@@ -46,6 +46,7 @@ router.put('/update-element', auth, async (req, res) => {
 // 다각형 생성 
 router.post('/create', auth, async (req, res) => {
     try{
+        const reqScores = req.body;
         const user = req.user;
 
         const UserElements = await user.getElements();
@@ -54,9 +55,21 @@ router.post('/create', auth, async (req, res) => {
 
         // 사용자의 요소들을 다각형 요소로 연결
         for (const element of UserElements) {
+            let score = 0;
+
+            // 지금 사용자 요소 id == 요청 요소 id 이면 score에 요청 score 값 저장
+            for (const reqScore of reqScores) {
+                console.log('for문 들어옴');
+                if (element.id == reqScore.id) {
+                    console.log('if문 들어옴');
+                    score = reqScore.score;
+                    break;
+                }
+            }
+
             await createPolygon.createElement({
                 name: `${element.name}_${createPolygon.id}`,
-                score: 0 
+                score: score 
             });
         }
 
@@ -124,7 +137,7 @@ router.get('/read/:id', auth, async (req, res) => {
     }
 });
 
-
+// 랜덤 만족도 질문 생성
 router.get('/questions', auth, async (req, res) => {
     try{
         const user = req.user;
@@ -132,18 +145,18 @@ router.get('/questions', auth, async (req, res) => {
         // 사용자가 가지고 있는 elements를 가져옴
         const userElements = await user.getElements();
 
+        // 최종적으로 모든 질문을 담을 변수
         const allQuestions = [];
 
         // 각 Element에서 랜덤으로 하나의 question을 선택하여 randomQuestions에 추가
         userElements.forEach(element => {
-            // 랜덤으로 선택된 질문을 담을 변수
+            // 한 요소에서 랜덤으로 선택된 질문을 담을 변수
             const randomQuestions = [];
 
             const questionsArray = element.questions;
     
             // 중복을 피하면서 다섯 개의 랜덤 질문을 뽑기
             while (randomQuestions.length < 5) {
-                // 남아있는 질문 중에서 랜덤으로 선택
                 const randomIndex = Math.floor(Math.random() * questionsArray.length);
                 const randomQuestion = questionsArray[randomIndex];
         
@@ -152,6 +165,7 @@ router.get('/questions', auth, async (req, res) => {
                 }
             }
 
+            // 한 요소에서 뽑힌 랜덤 질문과 요소 id, 요소 이름을 담을 변수
             const oneElement = {
                 id: element.id,
                 element_name: element.name,
