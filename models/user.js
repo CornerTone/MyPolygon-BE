@@ -38,7 +38,7 @@ module.exports = class User extends Sequelize.Model {
       db.User.belongsToMany(db.Element, { through: 'UserElement', as: 'elements' });
       db.User.hasMany(db.Polygon, { as: 'polygons' });
         db.User.hasMany(db.Compliment, { as: 'compliments' });
-        db.User.hasMany(db.UserActivity, {as : 'user_activities'});
+        db.User.hasMany(db.TimeInvestment, { as: 'timeInvestment'});
     }
 }
 
