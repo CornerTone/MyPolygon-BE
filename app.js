@@ -7,6 +7,7 @@ const authRouter = require('./routes/auth');
 const polygonRouter = require('./routes/polygon');
 const elementRouter = require('./routes/element');
 const complimentRouter = require('./routes/compliment');
+const user_activitiesRouter = require('./routes/user_activities');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -37,6 +38,7 @@ app.use('/api/auth', authRouter);
 app.use('/api/polygon',polygonRouter);
 app.use('/api/element', elementRouter);
 app.use('/api/compliment',complimentRouter);
+app.use('/api/user_activities',user_activitiesRouter);
 
 app.use((req, res, next) => {
   return res.json({
