@@ -6,7 +6,11 @@ module.exports = class Polygon extends Sequelize.Model {
         date: {
             type: DataTypes.DATE,
             allowNull: false
-          }
+        },
+        grade: {
+            type: DataTypes.INTEGER,
+            allowNull: false
+        }
       }, {
         sequelize,
         timestamps: true,

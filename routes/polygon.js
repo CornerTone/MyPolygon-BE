@@ -51,7 +51,10 @@ router.post('/create', auth, async (req, res) => {
 
         const UserElements = await user.getElements();
         // 현재 날짜를 가진 다각형 생성 
-        const createPolygon = await Polygon.create({ date: new Date() });
+        const createPolygon = await Polygon.create({ date: new Date(), grade: 0 });
+        
+        const perfectScore = UserElements.length * 5;
+        let totalScore = 0;
 
         // 사용자의 요소들을 다각형 요소로 연결
         for (const element of UserElements) {
@@ -59,19 +62,32 @@ router.post('/create', auth, async (req, res) => {
 
             // 지금 사용자 요소 id == 요청 요소 id 이면 score에 요청 score 값 저장
             for (const reqScore of reqScores) {
-                console.log('for문 들어옴');
                 if (element.id == reqScore.id) {
-                    console.log('if문 들어옴');
                     score = reqScore.score;
                     break;
                 }
             }
+
+            totalScore += score;
 
             await createPolygon.createElement({
                 name: `${element.name}_${createPolygon.id}`,
                 score: score 
             });
         }
+
+        let polygonGrade = 0;
+        // 다각형의 만족도 등급 계산
+        if ((totalScore / perfectScore) > (2 / 3)) {
+            polygonGrade = 1;
+        } else if ((totalScore / perfectScore) > (1 / 3)) {
+            polygonGrade = 2;
+        } else {
+            polygonGrade = 3;
+        }
+
+        createPolygon.grade = polygonGrade;
+        await createPolygon.save();
 
         // 유저와 다각형 연결 
         await user.addPolygon(createPolygon);
