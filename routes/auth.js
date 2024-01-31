@@ -117,4 +117,10 @@ router.get('/logout', auth, async (req, res) => {
     }
 });
 
+// auth 미들웨어 -> req.user에 현재 로그인한 유저 정보가 담김 
+router.get('/test', auth, (req, res) => {
+    return res.json({ user: req.user.nickname });
+});
+
+
 module.exports = router;
