@@ -81,7 +81,8 @@ router.get('/user-info', auth, async (req, res) => {
 
         return res.json({ 
             success: true,
-            elements: elements // element의 id, name만 전달
+            elements: elements, // element의 id, name만 전달,
+            user: user
         });
     } catch (error) {
         return res.status(500).json({ 
