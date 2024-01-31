@@ -24,7 +24,7 @@ module.exports = class Element extends Sequelize.Model {
     }
 
     static associate(db) {
-        db.Element.belongsTo(db.User); // Element는 하나의 User에 속함
+        db.Element.belongsToMany(db.User, { through: 'UserElement', as: 'users' });
         // db.Element.belongsTo(db.Polygon); // Element는 하나의 Polygon에 속함
     }
 }
