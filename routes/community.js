@@ -43,6 +43,7 @@ router.post('/create', auth, async(req, res) => {
 // 카테고리 별 커뮤니티 조회
 router.get('/read-category/:id', auth, async (req, res) => {
     const categoryId = req.params.id;
+    const category = await Element.findByPk(categoryId);
     try {
         // 카테고리에 해당하는 커뮤니티 글 조회
         const communities = await Community.findAll({
@@ -52,8 +53,8 @@ router.get('/read-category/:id', auth, async (req, res) => {
                     model: Element,
                     as: 'categories',
                     through: { attributes: [] },
-                    where: { id: categoryId },
-                    attributes: [] // 카테고리 정보를 선택 안되도록 
+                    where: { id: category.id },
+                    attributes: [] 
                 }
             ]
         });
@@ -62,13 +63,60 @@ router.get('/read-category/:id', auth, async (req, res) => {
             return res.status(404).json({ success: false, message: '해당 카테고리에 글이 없습니다.' });
         }
 
-        return res.status(200).json({ success: true, categoryId: (parseInt)(categoryId), communities: communities, });
+        return res.status(200).json({ success: true, categoryId:category.id , categoryName: category.name, communities: communities });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
     }
 });
 
+// 전체 커뮤니티 조회
+router.get('/read-category', auth, async (req, res) => {
+    try {
+        // 카테고리에 해당하는 커뮤니티 글 조회
+        const communities = await Community.findAll({
+            include: [
+                {
+                    model: Element,
+                    as: 'categories',
+                    attributes: ['id'], // 카테고리의 id만 선택
+                    through: { attributes: [] }
+                }
+            ]
+        });
+
+        if (!communities || communities.length === 0) {
+            return res.status(404).json({ success: false, message: '커뮤니티에 글이 없습니다.' });
+        }
+
+        return res.status(200).json({ success: true, communities: communities });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
+
+// 커뮤니티 글 상세조회
+router.get('/read-detail/:id', auth, async (req, res) => {
+    const communityId = req.params.id;
+    const communityDetail = await Community.findByPk(communityId, {
+        include: [
+            {
+                model: Element,
+                as: 'categories',
+                attributes: ['id'] // 카테고리의 id만 선택
+                ,through: { attributes: [] }
+            }
+        ]
+    });
+    try {
+
+        return res.status(200).json({ success: true, community:communityDetail });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
 
 
 
