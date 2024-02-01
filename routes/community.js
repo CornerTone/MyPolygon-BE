@@ -4,6 +4,7 @@ const auth = require('../middleware/auth');
 const Community = require('../models/community');
 const Element = require('../models/element');
 const User = require('../models/user');
+const Comment =require('../models/comment');
 
 const express = require('express');
 const router = express.Router();
@@ -106,7 +107,8 @@ router.get('/read-detail/:id', auth, async (req, res) => {
                 as: 'categories',
                 attributes: ['id'] // 카테고리의 id만 선택
                 ,through: { attributes: [] }
-            }
+            },
+            { model: Comment, as: 'community_comments' }
         ]
     });
     try {

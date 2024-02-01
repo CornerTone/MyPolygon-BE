@@ -52,19 +52,6 @@ router.get('/read/:id', auth, async (req, res) => {
             return res.status(404).json({ success: false, message: '해당 커뮤니티를 찾을 수 없습니다.' });
         }
 
-        // 댓글 작성자의 정보를 가공하여 표시
-        community.community_comments.forEach(comment => {
-            if (comment.UserId === community.UserId) {
-                // 커뮤니티를 작성한 사용자인 경우
-                comment.username = '글쓴이';
-            } else {
-                // 커뮤니티를 작성한 사용자가 아닌 경우, 익명으로 처리
-                comment.username = `익명의 다각형 ${comment.UserId}`;
-            }
-            // 사용자 ID는 더 이상 필요하지 않으므로 삭제
-            delete comment.UserId;
-        });
-
         return res.status(200).json({ success: true, community:community });
     } catch (error) {
         console.error(error);
