@@ -191,7 +191,7 @@ router.get('/questions', auth, async (req, res) => {
             allQuestions.push(oneElement);
         });
     
-        res.status(200).json({ success: true, elements: allQuestions });
+        res.status(200).json({ success: true, message: "만족도 질문 생성 성공", elements: allQuestions });
     } catch (error) {
         res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
     }
