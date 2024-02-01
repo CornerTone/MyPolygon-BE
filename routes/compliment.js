@@ -82,8 +82,6 @@ router.put('/update/:id', auth, async (req, res) => {
 // 칭찬일기 삭제
 router.delete('/delete/:id', auth, async (req, res) => {
     try {
-        const { content, emotion } = req.body;
-        const user = req.user;
         const complimentId = req.params.id;
         // id에 해당하는 칭찬일기 글 가져옴 
         const userCompliments = await Compliment.findByPk(complimentId);
