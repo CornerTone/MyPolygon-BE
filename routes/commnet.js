@@ -9,6 +9,7 @@ const Comment = require('../models/comment')
 const express = require('express');
 const router = express.Router();
 
+// 커뮤니티 댓글 작성
 router.post('/create/:id', auth, async(req, res) => {
     const communityId = req.params.id;
     const { content } = req.body;
@@ -39,6 +40,7 @@ router.post('/create/:id', auth, async(req, res) => {
 
 })
 
+// 커뮤니티 댓글 조회
 router.get('/read/:id', auth, async (req, res) => {
     const communityId = req.params.id;
 
@@ -59,5 +61,23 @@ router.get('/read/:id', auth, async (req, res) => {
     }
 });
 
+// 커뮤니티 댓글 수정
+router.put('/update/:id', auth, async (req, res) => {
+    try {
+        const { content } = req.body;
+        const user = req.user;
+        const commentId = req.params.id;
+        // id에 해당하는 댓글 가져옴 
+        const userComment = await Comment.findByPk(commentId);
+
+        // 수정 
+        userComment.content = content;
+        userComment.save();
+        res.json({ success: true, message: "댓글이 성공적으로 수정되었습니다" });
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
 
 module.exports = router;
