@@ -12,9 +12,9 @@ const Polygon = require('./polygon');
 const User = require('./user');
 
 const Community = require('./community');
+const Comment = require('./comment');
 
 const Compliment = require('./compliment');
-
 const TimeInvestment = require('./timeInvestment');
 
 // 모델 정의
@@ -27,7 +27,7 @@ const db = {
     Compliment: Compliment.init(sequelize),
     TimeInvestment: TimeInvestment.init(sequelize),
     Community: Community.init(sequelize),
-
+    Comment: Comment.init(sequelize)
 };
 
 // 관계 설정
@@ -38,4 +38,6 @@ Compliment.associate(db);
 PolygonElement.associate(db);
 TimeInvestment.associate(db);
 Community.associate(db);
+Comment.associate(db);
+
 module.exports = db;

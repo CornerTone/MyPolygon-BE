@@ -21,5 +21,6 @@ module.exports = class Compliment extends Sequelize.Model {
     static associate(db) {
         db.Community.belongsTo(db.User);
         db.Community.belongsToMany(db.Element, { through: 'CommunityElement', as: 'categories' });
+        db.Community.hasMany(db.Comment, { as: 'community_comments'});
     }
 }

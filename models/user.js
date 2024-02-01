@@ -40,6 +40,8 @@ module.exports = class User extends Sequelize.Model {
         db.User.hasMany(db.Compliment, { as: 'compliments' });
         db.User.hasMany(db.TimeInvestment, { as: 'timeInvestment'});
         db.User.hasMany(db.Community, { as: 'communitys'});
+        db.User.hasMany(db.Comment, { as: 'comments'});
+        
     }
 }
 
