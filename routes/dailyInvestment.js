@@ -34,9 +34,9 @@ router.put('/rewrite_daily', auth, async (req, res) => {
         // DailyInvestment 모델을 사용하여 데이터베이스에서 해당 사용자의 해당 날짜의 투자 정보를 찾기
         let dailyInvestment = await DailyInvestment.findOne({
             where: {
-                user_id,
-                activityDate,
-                category
+                user_id: user_id,
+                activity_date: activityDate,
+                category: category
             }
         });
 
@@ -61,10 +61,11 @@ router.put('/rewrite_daily', auth, async (req, res) => {
     }
 });
 
-// GET 요청을 통해 현재 사용자의 하루 투자 정보를 조회하는 라우터
+
+// GET 요청을 통해 특정 사용자의 하루 투자 정보를 조회하는 라우터
 router.get('/daily', auth, async (req, res) => {
     try {
-        const userId = req.user.id; // 인증된 사용자의 ID를 가져옵니다.
+        const userId = req.user.id;
 
         // DailyInvestment 모델을 사용하여 현재 사용자의 하루 투자 정보를 조회
         const userDailyInvestments = await DailyInvestment.findAll({

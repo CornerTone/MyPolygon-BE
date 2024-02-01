@@ -144,8 +144,6 @@ router.put('/update/:id', auth, async (req, res) => {
 // 커뮤니티 글 삭제
 router.delete('/delete/:id', auth, async (req, res) => {
     try {
-        const { content, category } = req.body;
-        const user = req.user;
         const communityId = req.params.id;
         // id에 해당하는 커뮤니티 글 가져옴 
         const userCommunity = await Community.findByPk(communityId);
