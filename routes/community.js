@@ -118,7 +118,44 @@ router.get('/read-detail/:id', auth, async (req, res) => {
     }
 });
 
+// 커뮤니티 글 수정
+router.put('/update/:id', auth, async (req, res) => {
+    try {
+        const { content, category } = req.body;
+        const user = req.user;
+        const communityId = req.params.id;
+        // id에 해당하는 커뮤니티 글 가져옴 
+        const userCommunity = await Community.findByPk(communityId);
 
+        // 수정 
+        userCommunity.content = content;
+        // 카테고리 수정
+        await userCommunity.setCategories(category);
+        userCommunity.save();
+        res.json({ success: true, message: "커뮤니티 글이 성공적으로 수정되었습니다" });
 
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
+
+// 커뮤니티 글 삭제
+router.delete('/delete/:id', auth, async (req, res) => {
+    try {
+        const { content, category } = req.body;
+        const user = req.user;
+        const communityId = req.params.id;
+        // id에 해당하는 커뮤니티 글 가져옴 
+        const userCommunity = await Community.findByPk(communityId);
+        
+        // 삭제
+        userCommunity.destroy();
+
+        res.json({ success: true, message: "커뮤니티 글이 성공적으로 삭제되었습니다"});
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
 
 module.exports = router;
