@@ -8,7 +8,8 @@ const polygonRouter = require('./routes/polygon');
 const elementRouter = require('./routes/element');
 const complimentRouter = require('./routes/compliment');
 const timeInvestmentRouter = require('./routes/timeInvestment');
-const Community = require('./routes/community');
+const communityRouter = require('./routes/community');
+const commentRouter=require('./routes/commnet');
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -40,7 +41,8 @@ app.use('/api/polygon',polygonRouter);
 app.use('/api/element', elementRouter);
 app.use('/api/compliment',complimentRouter);
 app.use('/api/timeInvestment',timeInvestmentRouter);
-app.use('/api/community', Community);
+app.use('/api/community', communityRouter);
+app.use('/api/comment', commentRouter);
 
 app.use((req, res, next) => {
   return res.json({
