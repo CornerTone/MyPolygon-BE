@@ -11,6 +11,7 @@ const PolygonElement = require('./polygon_element');
 const Polygon = require('./polygon');
 const User = require('./user');
 
+const Community = require('./community');
 
 const Compliment = require('./compliment');
 
@@ -25,6 +26,7 @@ const db = {
     User: User.init(sequelize),
     Compliment: Compliment.init(sequelize),
     TimeInvestment: TimeInvestment.init(sequelize),
+    Community: Community.init(sequelize),
 
 };
 
@@ -35,5 +37,5 @@ User.associate(db);
 Compliment.associate(db);
 PolygonElement.associate(db);
 TimeInvestment.associate(db);
-
+Community.associate(db);
 module.exports = db;
