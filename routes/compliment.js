@@ -72,7 +72,7 @@ router.put('/update/:id', auth, async (req, res) => {
         userCompliments.content = content;
         userCompliments.emotion = emotion;
         userCompliments.save();
-        res.json({ success: true, message: userCompliments });
+        res.json({ success: true, message: "칭찬일기가 성공적으로 수정되었습니다" });
 
     } catch (error) {
         res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
