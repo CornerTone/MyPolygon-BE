@@ -61,12 +61,13 @@ router.put('/rewrite_daily', auth, async (req, res) => {
     }
 });
 
+
 // GET 요청을 통해 특정 사용자의 하루 투자 정보를 조회하는 라우터
 router.get('/daily', auth, async (req, res) => {
     try {
         const userId = req.user.id;
 
-        // DailyInvestment 모델을 사용하여 특정 사용자의 하루 투자 정보를 조회
+        // DailyInvestment 모델을 사용하여 현재 사용자의 하루 투자 정보를 조회
         const userDailyInvestments = await DailyInvestment.findAll({
             where: {
                 user_id: userId,
@@ -76,11 +77,12 @@ router.get('/daily', auth, async (req, res) => {
             }
         });
 
-        res.status(200).json({ success: true, message: '사용자의 하루 투자 정보를 조회했습니다.', data: userDailyInvestments });
+        res.status(200).json({ success: true, message: '현재 사용자의 하루 투자 정보를 조회했습니다.', data: userDailyInvestments });
     } catch (error) {
         console.error('Error fetching user daily investments:', error);
-        res.status(500).json({ success: false, message: '사용자의 하루 투자 정보를 조회하는 데 실패했습니다.' });
+        res.status(500).json({ success: false, message: '현재 사용자의 하루 투자 정보를 조회하는 데 실패했습니다.' });
     }
 });
+
 
 module.exports = router;
