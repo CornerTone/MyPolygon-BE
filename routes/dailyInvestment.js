@@ -62,9 +62,9 @@ router.post('/rewrite_daily', auth, async (req, res) => {
 });
 
 // GET 요청을 통해 특정 사용자의 하루 투자 정보를 조회하는 라우터
-router.get('/daily/:userId', async (req, res) => {
+router.get('/daily', auth, async (req, res) => {
     try {
-        const userId = req.params.userId;
+        const userId = req.user.id;
 
         // DailyInvestment 모델을 사용하여 특정 사용자의 하루 투자 정보를 조회
         const userDailyInvestments = await DailyInvestment.findAll({
