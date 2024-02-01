@@ -7,7 +7,9 @@ const authRouter = require('./routes/auth');
 const polygonRouter = require('./routes/polygon');
 const elementRouter = require('./routes/element');
 const complimentRouter = require('./routes/compliment');
-const timeInvestmentRouter = require('./routes/timeInvestment');
+const dailyInvestmentRouter = require('./routes/dailyInvestment');
+const weeklyInvestmentRouter = require('./routes/weeklyInvestment');
+
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -38,7 +40,9 @@ app.use('/api/auth', authRouter);
 app.use('/api/polygon',polygonRouter);
 app.use('/api/element', elementRouter);
 app.use('/api/compliment',complimentRouter);
-app.use('/api/timeInvestment',timeInvestmentRouter);
+app.use('/api/dailyInvestment',dailyInvestmentRouter);
+app.use('/api/weeklyInvestment',weeklyInvestmentRouter);
+
 
 app.use((req, res, next) => {
   return res.json({

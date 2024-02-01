@@ -14,7 +14,8 @@ const User = require('./user');
 
 const Compliment = require('./compliment');
 
-const TimeInvestment = require('./timeInvestment');
+const DailyInvestment = require('./dailyInvestment');
+const WeeklyInvestment = require('./weeklyInvestment');
 
 // 모델 정의
 const db = {
@@ -24,8 +25,8 @@ const db = {
     Polygon: Polygon.init(sequelize),
     User: User.init(sequelize),
     Compliment: Compliment.init(sequelize),
-    TimeInvestment: TimeInvestment.init(sequelize),
-
+    DailyInvestment: DailyInvestment.init(sequelize),
+    WeeklyInvestment: WeeklyInvestment.init(sequelize),
 };
 
 // 관계 설정
@@ -34,6 +35,7 @@ Polygon.associate(db);
 User.associate(db);
 Compliment.associate(db);
 PolygonElement.associate(db);
-TimeInvestment.associate(db);
+DailyInvestment.associate(db);
+WeeklyInvestment.associate(db);
 
 module.exports = db;
