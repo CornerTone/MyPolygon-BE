@@ -80,4 +80,21 @@ router.put('/update/:id', auth, async (req, res) => {
     }
 });
 
+// 커뮤니티 댓글 삭제
+router.delete('/delete/:id', auth, async (req, res) => {
+    try {
+        const commentId = req.params.id;
+        // id에 해당하는 댓글 가져옴 
+        const userComment = await Comment.findByPk(commentId);
+        
+        // 삭제
+        userComment.destroy();
+
+        res.json({ success: true, message: "댓글이 성공적으로 삭제되었습니다"});
+
+    } catch (error) {
+        res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
+    }
+});
+
 module.exports = router;
