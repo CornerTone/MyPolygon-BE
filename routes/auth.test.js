@@ -1,50 +1,26 @@
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt'); // bcrypt 가져오기 추가
-const auth = require('../middleware/auth');
 const request = require('supertest');
-const authRouter = require('./auth');
-const express = require('express');
-const app=require('../app')
-
 const { sequelize } = require('../models');
-
 
 // 테스트 전 데이터베이스 초기화
 beforeAll(async () => {
-    await sequelize.sync({ force: true }); // 데이터베이스 초기화
+    await sequelize.sync({ force: true }); 
 });
 
 // 테스트 후 데이터베이스 정리
 afterAll(async () => {
-    await sequelize.close(); // 데이터베이스 연결 닫기
+    await sequelize.close(); 
 });
 
-
 describe('회원가입 진행', () => {
-    it('새로운 유저 정상적으로 생성되어야 함', async () => {
+    it('새로운 유저 생성', async () => {
         userNickName = "eunseo";
         userPhoneNumber = "01012345678";
         userPassword = "1234";
         userPassword2 = "1234";
 
-        const user = {
-            id: 1,
-            nickname: userNickName,
-            phone_number: userPhoneNumber,
-            password: await bcrypt.hash(userPassword, 12)
-        }
-
-        const req = { body : {
-            nickname: userNickName,
-                phone_number: userPhoneNumber,
-                password: userPassword,
-                password2: userPassword2
-        }}
-
-
         // 요청
-        const response = await request("http://localhost:3001") // authRouter로 요청
-            .post('/api/auth/join') // authRouter에는 '/api/auth'가 이미 설정되어 있으므로 '/join'만 지정하면 됩니다.
+        const response = await request("http://localhost:3001") // 요청 도메인
+            .post('/api/auth/join') 
             .send({
                 nickname: userNickName,
                 phone_number: userPhoneNumber,
@@ -52,11 +28,102 @@ describe('회원가입 진행', () => {
                 password2: userPassword2
             });
 
-        //console.log("err => "+response.error.message);
-        console.log("here'");
         expect(response.statusCode).toBe(201);
         expect(response.body.success).toBe(true);
         expect(response.body.message).toBe("회원가입 성공");
-    })
+    });
+
+    it("이미 존재하는 닉네임으로 회원가입 시도 시 실패", async () => {
+        userNickName = "eunseo";
+        userPhoneNumber = "01012345678";
+        userPassword = "1234";
+        userPassword2 = "1234";
+
+        await request("http://localhost:3001")
+            .post('/api/auth/join') 
+            .send({
+                nickname: userNickName,
+                phone_number: userPhoneNumber,
+                password: userPassword,
+                password2: userPassword2
+            });
+
+        // 2번째 요청
+        const response = await request("http://localhost:3001")
+            .post('/api/auth/join') 
+            .send({
+                nickname: userNickName,
+                phone_number: userPhoneNumber,
+                password: userPassword,
+                password2: userPassword2
+            });
+
+        expect(response.statusCode).toBe(400);
+        expect(response.body.success).toBe(false);
+    });
 });
 
+describe("로그인", () => {
+    it('로그인 진행', async () => {
+         // 요청
+        await request("http://localhost:3001")
+            .post('/api/auth/join') 
+            .send({
+                nickname: userNickName,
+                phone_number: userPhoneNumber,
+                password: userPassword,
+                password2: userPassword2
+            });
+
+        const response = await request("http://localhost:3001")
+            .post('/api/auth/login') 
+            .send({
+                nickname: userNickName,
+                password: userPassword
+            });
+
+        expect(response.statusCode).toBe(200);
+        expect(response.body.success).toBe(true);
+    });
+
+    it("회원정보가 없는 유저가 로그인 시 에러", async () => {
+        const response = await request("http://localhost:3001") 
+            .post('/api/auth/login') 
+            .send({
+                nickname: "whoareyou",
+                password: userPassword
+            });
+
+        expect(response.statusCode).toBe(404);
+        expect(response.body.success).toBe(false);
+    });
+});
+
+/*
+describe("로그아웃", () => {
+    it('로그아웃 진행', async () => {
+
+        await request("http://localhost:3001") // 회원가입
+         .post('/api/auth/join') 
+         .send({
+             nickname: userNickName,
+             phone_number: userPhoneNumber,
+             password: userPassword,
+             password2: userPassword2
+         });
+
+     await request("http://localhost:3001") // 로그인
+     .post('/api/auth/login') 
+     .send({
+         nickname: userNickName,
+         password: userPassword
+     });
+    
+        const response= await request("http://localhost:3001") // 로그아웃
+         .get('/api/auth/logout');
+
+     expect(response.statusCode).toBe(200);
+     expect(response.body.success).toBe(true);
+     // expect(response.body.message).toBe("회원가입 성공");
+    });
+})*/
