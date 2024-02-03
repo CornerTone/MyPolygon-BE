@@ -10,15 +10,15 @@ const router = express.Router();
 // 회원가입
 router.post('/join', async (req, res) => { 
     try {
-        const { nickname, phone_number, password, password2 } = req.body;
+        const { nickname, phone_number, password } = req.body;
         const exUser = await User.findOne({ where: { nickname } });
         if (exUser) {
             return res.status(400).json({ success: false, message: "닉네임이 이미 존재합니다" });
         }
 
-        if (password != password2) {
+        /*if (password !== password2) {
             return res.status(400).json({ success: false, message: "비밀번호가 일치하지 않습니다." });
-        }
+        }*/
         
         const hash = await bcrypt.hash(password, 12);
         await User.create({
@@ -27,9 +27,9 @@ router.post('/join', async (req, res) => {
             password: hash
         });
 
-        return res.status(200).json({ success: true , message: "회원가입 성공"});
-    } catch (err) {
-        console.error(err);
+        return res.status(201).json({ success: true , message: "회원가입 성공"});
+    } catch (error) {
+        // console.error(err);
         return res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message }` });
     }
 });
