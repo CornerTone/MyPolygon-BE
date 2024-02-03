@@ -27,7 +27,7 @@ let corsOptions = {
   credential: true, // 사용자 인증이 필요한 리소스(쿠키 등) 접근
 }
 
-sequelize.sync({ force: true }) // true 면 데이터베이스 재생성, false면 데이터베이스 변하지 않음 => true로 db모두 지우고 false로 바꿔서 디비 초기화로 사용중..
+sequelize.sync({ force: false }) // true 면 데이터베이스 재생성, false면 데이터베이스 변하지 않음 => true로 db모두 지우고 false로 바꿔서 디비 초기화로 사용중..
   .then(() => {
     console.log('데이터베이스 연결 성공');
   })
