@@ -2,7 +2,7 @@ const User = require('../models/user');
 const Polygon = require('../models/polygon');
 const Element = require('../models/element');
 const PolygonElement = require('../models/polygon_element');
-
+const { Op } = require('sequelize'); 
 const auth = require('../middleware/auth');
 
 const express = require('express');
@@ -122,28 +122,51 @@ router.get('/read-all', auth, async (req, res) => {
     }
 });
 
-// 다각형 상세 조회 
 router.get('/read/:id', auth, async (req, res) => {
     try {
         const user = req.user;
         const polygonId = req.params.id;
 
         // 사용자의 특정 다각형 가져오기
-        const userPolygon = await user.getPolygons({
+        const userPolygon = await Polygon.findOne({
             where: { id: polygonId },
-            include: [{ model: PolygonElement, as: 'elements' }] // 다각형 요소와 함께 가져옴 
+            include: [{ model: PolygonElement, as: 'elements' }] // 다각형 요소와 함께
         });
 
-        if (!userPolygon || userPolygon.length === 0) {
+        if (!userPolygon) {
             return res.status(404).json({ 
                 success: false, 
                 message: "해당 다각형을 찾을 수 없습니다." 
             });
         }
 
+        // 현재 다각형 ID를 기준으로 작은 ID와 큰 ID를 가진 다각형 조회
+        const previousPolygon = await Polygon.findOne({
+            where: {
+                id: {
+                    [Op.lt]: polygonId // 현재 다각형 ID보다 작은 ID인 다각형 조회
+                }
+            },
+            order: [['id', 'DESC']] // 내림차순으로 정렬하여 가장 큰 ID를 가진 다각형을 가져옴
+        });
+
+        const nextPolygon = await Polygon.findOne({
+            where: {
+                id: {
+                    [Op.gt]: polygonId // 현재 다각형 ID보다 큰 ID인 다각형 조회ㅇ
+                }
+            },
+            order: [['id', 'ASC']] // 오름차순으로 정렬하여 가장 작은 ID를 가진 다각형을 가져옴
+        });
+        // end 라면 마지막 다각형, start라면 첫번재 다각형 
+        const end = !!previousPolygon;
+        const start = !!nextPolygon;
+
         res.status(200).json({ 
             success: true, 
-            polygon: userPolygon[0] // userPolygons 배열의 첫 번째 요소만 반환해야 함 
+            polygon: userPolygon,
+            start,
+            end
         });
     } catch (error) {
         res.status(500).json({ 
@@ -153,49 +176,44 @@ router.get('/read/:id', auth, async (req, res) => {
     }
 });
 
-// 랜덤 만족도 질문 생성
+
+
+
 router.get('/questions', auth, async (req, res) => {
-    try{
+    try {
         const user = req.user;
 
         // 사용자가 가지고 있는 elements를 가져옴
         const userElements = await user.getElements();
 
-        // 최종적으로 모든 질문을 담을 변수
-        const allQuestions = [];
+        // 최종적으로 모든 질문을 담을 객체
+        const allQuestions = {};
 
-        // 각 Element에서 랜덤으로 하나의 question을 선택하여 randomQuestions에 추가
+        // 각 Element에서 랜덤으로 하나의 question을 선택하여 allQuestions 객체에 추가
         userElements.forEach(element => {
-            // 한 요소에서 랜덤으로 선택된 질문을 담을 변수
             const randomQuestions = [];
-
             const questionsArray = element.questions;
-    
+
             // 중복을 피하면서 다섯 개의 랜덤 질문을 뽑기
             while (randomQuestions.length < 5) {
                 const randomIndex = Math.floor(Math.random() * questionsArray.length);
                 const randomQuestion = questionsArray[randomIndex];
-        
+
                 if (!randomQuestions.includes(randomQuestion)) {
                     randomQuestions.push(randomQuestion);
                 }
             }
 
-            // 한 요소에서 뽑힌 랜덤 질문과 요소 id, 요소 이름을 담을 변수
-            const oneElement = {
-                id: element.id,
-                element_name: element.name,
-                question_strings: randomQuestions
-            };
-
-            allQuestions.push(oneElement);
+            // 요소 이름과 해당 요소에 대한 랜덤 질문들을 allQuestions 객체에 추가
+            allQuestions[element.name] = randomQuestions;
         });
-    
+
         res.status(200).json({ success: true, message: "만족도 질문 생성 성공", elements: allQuestions });
     } catch (error) {
         res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
     }
-})
+});
+
 
 
 module.exports = router;
