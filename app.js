@@ -37,7 +37,7 @@ sequelize.sync({ force: false }) // true 면 데이터베이스 재생성, false
   });
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 app.set('port', port); // 포트 설정
 
