@@ -24,7 +24,7 @@ process.env.TZ = 'Asia/Seoul'; // 시간 수정 필요
 
 // 특정 출처에 대해서만 CORS를 허용
 const corsOptions = {
-  origin: 'http://localhost:3001',
+  origin: 'http://localhost:3000',
   credentials: true // 사용자 인증이 필요한 리소스(쿠키 등) 접근
 };
 
