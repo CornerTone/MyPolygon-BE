@@ -1,5 +1,6 @@
 const request = require('supertest');
 const { sequelize } = require('../models');
+const app = require('../app');
 
 // 테스트 전 데이터베이스 초기화
 beforeAll(async () => {
@@ -19,7 +20,7 @@ describe('회원가입 진행', () => {
         userPassword2 = "1234";
 
         // 요청
-        const response = await request("http://localhost:3001") // 요청 도메인
+        const response = await request(app) // 요청 도메인
             .post('/api/auth/join') 
             .send({
                 nickname: userNickName,
@@ -39,7 +40,7 @@ describe('회원가입 진행', () => {
         userPassword = "1234";
         userPassword2 = "1234";
 
-        await request("http://localhost:3001")
+        await request(app)
             .post('/api/auth/join') 
             .send({
                 nickname: userNickName,
@@ -49,7 +50,7 @@ describe('회원가입 진행', () => {
             });
 
         // 2번째 요청
-        const response = await request("http://localhost:3001")
+        const response = await request(app)
             .post('/api/auth/join') 
             .send({
                 nickname: userNickName,
@@ -66,7 +67,7 @@ describe('회원가입 진행', () => {
 describe("로그인", () => {
     it('로그인 진행', async () => {
          // 요청
-        await request("http://localhost:3001")
+        await request(app)
             .post('/api/auth/join') 
             .send({
                 nickname: userNickName,
@@ -75,7 +76,7 @@ describe("로그인", () => {
                 password2: userPassword2
             });
 
-        const response = await request("http://localhost:3001")
+        const response = await request(app)
             .post('/api/auth/login') 
             .send({
                 nickname: userNickName,
@@ -87,7 +88,7 @@ describe("로그인", () => {
     });
 
     it("회원정보가 없는 유저가 로그인 시 에러", async () => {
-        const response = await request("http://localhost:3001") 
+        const response = await request(app) 
             .post('/api/auth/login') 
             .send({
                 nickname: "whoareyou",

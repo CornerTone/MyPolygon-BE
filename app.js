@@ -37,7 +37,7 @@ sequelize.sync({ force: false }) // true 면 데이터베이스 재생성, false
   });
 
 const app = express();
-const port = 3001;
+const port = 3000;
 
 app.set('port', port); // 포트 설정
 
@@ -69,6 +69,6 @@ app.use((req, res, next) => {
 /*app.listen(app.get('port'), () => {
   console.log(app.get('port'), '번 포트에서 대기 중');
 });*/
-server = app.listen(app.get('port'));
-module.export = server;
+// server = app.listen(app.get('port'));
+// module.export = server;
 module.exports = app;
