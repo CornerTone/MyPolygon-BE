@@ -118,13 +118,23 @@ router.get('/create', async (req, res) => {
           "금전적인 문제에 대처하고 그를 극복하는 과정에서 만족하고 계신가요?",
         ]
 
+        const short = [
+          "1",
+          "2",
+          "3",
+          "4",
+          "5",
+          "6"
+          
+        ]
+
         // 데이터베이스에 element 모두 생성 
         await Element.bulkCreate([
-          { name: '학업', questions: study, score: 0, time: 0 },
-          { name: '여가', questions: rest, score: 0, time: 0 },
-          { name: '건강', questions: health, score: 0, time: 0 },
-          { name: '인간관계', questions: relationships, score: 0, time: 0 },
-          { name: '경제', questions: economy, score: 0, time: 0 }
+          { name: '학업', questions: short, score: 0, time: 0 },
+          { name: '여가', questions: short, score: 0, time: 0 },
+          { name: '건강', questions: short, score: 0, time: 0 },
+          { name: '인간관계', questions: short, score: 0, time: 0 },
+          { name: '경제', questions: short, score: 0, time: 0 }
         ]);
         
         res.json({ success: true, message: 'Elements 생성 완료' });
