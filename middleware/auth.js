@@ -11,6 +11,8 @@ let auth = async (req, res, next) => {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const userId = decoded.userId;
 
+        console.log(userId);
+
         // 데이터베이스에서 사용자 정보 조회
         const user = await User.findByPk(userId);
 
