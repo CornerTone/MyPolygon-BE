@@ -8,12 +8,17 @@ const { Op } = require('sequelize');
 // POST 요청을 통해 하루의 투자 정보를 저장하는 라우터
 router.post('/save_daily', auth, async (req, res) => {
     try {
-        const { category, timeInvested, activityDate} = req.body;
+        const { category, totalMinutes, activityDate } = req.body;
+
+        // 분을 시간과 분으로 분리
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
 
         // DailyInvestment 모델을 사용하여 데이터베이스에 저장
         const dailyInvestment = await DailyInvestment.create({
             category,
-            timeInvested,
+            hours,
+            minutes,
             activityDate,
             user_id: req.user.id // 로그인된 사용자의 ID를 저장
         });
@@ -25,11 +30,15 @@ router.post('/save_daily', auth, async (req, res) => {
     }
 });
 
-// 시간 수정될 시 저장
+
 router.put('/rewrite_daily', auth, async (req, res) => {
     try {
-        const { category, timeInvested, activityDate } = req.body;
+        const { category, totalMinutes, activityDate } = req.body;
         const user_id = req.user.id; // 요청에서 사용자 ID를 가져옵니다. 이는 로그인된 사용자의 ID일 것입니다.
+
+        // 분을 시간과 분으로 분리
+        const hours = Math.floor(totalMinutes / 60);
+        const minutes = totalMinutes % 60;
 
         // DailyInvestment 모델을 사용하여 데이터베이스에서 해당 사용자의 해당 날짜의 투자 정보를 찾기
         let dailyInvestment = await DailyInvestment.findOne({
@@ -44,13 +53,15 @@ router.put('/rewrite_daily', auth, async (req, res) => {
         if (!dailyInvestment) {
             dailyInvestment = await DailyInvestment.create({
                 category,
-                timeInvested,
+                hours,
+                minutes,
                 activityDate,
                 user_id
             });
         } else {
             // 투자 정보가 이미 존재하면 시간을 업데이트
-            dailyInvestment.timeInvested = timeInvested;
+            dailyInvestment.hours = hours;
+            dailyInvestment.minutes = minutes;
             await dailyInvestment.save();
         }
 
