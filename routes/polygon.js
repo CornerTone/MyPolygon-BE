@@ -127,47 +127,54 @@ router.get('/read/:id', auth, async (req, res) => {
         const user = req.user;
         const polygonId = req.params.id;
 
-        // 사용자의 특정 다각형 가져오기
-        const userPolygon = await Polygon.findOne({
-            where: { id: polygonId },
-            include: [{ model: PolygonElement, as: 'elements' }] // 다각형 요소와 함께
+        const userPolygons = await Polygon.findAll({
+            where: { userId: user.id },
+            order: [['id', 'ASC']]
         });
 
-        if (!userPolygon) {
-            return res.status(404).json({ 
-                success: false, 
-                message: "해당 다각형을 찾을 수 없습니다." 
+
+        const IntPolygonId=parseInt(req.params.id, 10); // int 형으로 바꾸지 않으면 조회 불가 
+
+        // 현재 다각형의 인덱스를 찾아야 함 
+        const currentIndex = userPolygons.findIndex(polygon => polygon.id === IntPolygonId);
+        console.log(userPolygons)
+        console.log(currentIndex)
+
+        // 이전 다각형과 다음 다각형
+        const previousPolygon = currentIndex > 0 ? userPolygons[currentIndex - 1] : null;
+        const nextPolygon = currentIndex < userPolygons.length - 1 ? userPolygons[currentIndex + 1] : null;
+
+        let previousPolygonData = null;
+        let nextPolygonData = null;
+
+        if (previousPolygon) {
+            previousPolygonData = await Polygon.findOne({
+                where: { id: previousPolygon.id },
+                include: [{ model: PolygonElement, as: 'elements' }]
             });
         }
 
-        // 현재 다각형 ID를 기준으로 작은 ID와 큰 ID를 가진 다각형 조회
-        const previousPolygon = await Polygon.findOne({
-            where: {
-                id: {
-                    [Op.lt]: polygonId // 현재 다각형 ID보다 작은 ID인 다각형 조회
-                }
-            },
-            order: [['id', 'DESC']] // 내림차순으로 정렬하여 가장 큰 ID를 가진 다각형을 가져옴
+        if (nextPolygon) {
+            nextPolygonData = await Polygon.findOne({
+                where: { id: nextPolygon.id },
+                include: [{ model: PolygonElement, as: 'elements' }]
+            });
+        }
+
+        // 현재 조회하구 있는 다각형 정보 반환
+        const userPolygon = await Polygon.findOne({
+            where: { id: polygonId },
+            include: [{ model: PolygonElement, as: 'elements' }]
         });
 
-        const nextPolygon = await Polygon.findOne({
-            where: {
-                id: {
-                    [Op.gt]: polygonId // 현재 다각형 ID보다 큰 ID인 다각형 조회ㅇ
-                }
-            },
-            order: [['id', 'ASC']] // 오름차순으로 정렬하여 가장 작은 ID를 가진 다각형을 가져옴
-        });
-        // end 라면 마지막 다각형, start라면 첫번재 다각형 
-        const end = !!previousPolygon;
-        const start = !!nextPolygon;
-
-        res.status(200).json({ 
-            success: true, 
+        const responseData = {
+            success: true,
             polygon: userPolygon,
-            start,
-            end
-        });
+            previousPolygon: previousPolygon,
+            nextPolygon: nextPolygon,
+        };
+
+        res.status(200).json(responseData);
     } catch (error) {
         res.status(500).json({ 
             success: false, 
