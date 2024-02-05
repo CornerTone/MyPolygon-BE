@@ -35,6 +35,10 @@ router.get('/read-all', auth, async (req, res) => {
         // 사용자가 작성한 모든 칭찬일기 가져옴
         const userCompliments = await Compliment.findAll({
             where: { userId: user.id } // 사용자 ID를 기준으로 분류
+            ,
+            order: [
+                ['id', 'DESC'] // id를 내림차순으로 정렬
+            ]
         });
 
         res.json({ success: true, message: userCompliments });

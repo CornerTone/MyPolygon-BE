@@ -5,6 +5,7 @@ const Community = require('../models/community');
 const Element = require('../models/element');
 const User = require('../models/user');
 const Comment =require('../models/comment');
+const { sequelize } = require('../models');
 
 const express = require('express');
 const router = express.Router();
@@ -83,6 +84,9 @@ router.get('/read-category', auth, async (req, res) => {
                     attributes: ['id'], // 카테고리의 id만 선택
                     through: { attributes: [] }
                 }
+            ],
+            order: [
+                ['id', 'DESC'] // id를 내림차순으로 정렬
             ]
         });
 
