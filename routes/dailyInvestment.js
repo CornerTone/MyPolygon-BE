@@ -34,7 +34,7 @@ router.post('/save_daily', auth, async (req, res) => {
 router.put('/rewrite_daily', auth, async (req, res) => {
     try {
         const { category, totalMinutes, activityDate } = req.body;
-        const user_id = req.user.id; // 요청에서 사용자 ID를 가져옵니다. 이는 로그인된 사용자의 ID일 것입니다.
+        const userId = req.user.id; // 요청에서 사용자 ID를 가져옵니다. 이는 로그인된 사용자의 ID일 것입니다.
 
         // 분을 시간과 분으로 분리
         const hours = Math.floor(totalMinutes / 60);
@@ -43,8 +43,8 @@ router.put('/rewrite_daily', auth, async (req, res) => {
         // DailyInvestment 모델을 사용하여 데이터베이스에서 해당 사용자의 해당 날짜의 투자 정보를 찾기
         let dailyInvestment = await DailyInvestment.findOne({
             where: {
-                user_id: user_id,
-                activity_date: activityDate,
+                user_id: userId,
+                activityDate: activityDate,
                 category: category
             }
         });
@@ -56,7 +56,7 @@ router.put('/rewrite_daily', auth, async (req, res) => {
                 hours,
                 minutes,
                 activityDate,
-                user_id
+                user_id: userId
             });
         } else {
             // 투자 정보가 이미 존재하면 시간을 업데이트
@@ -117,11 +117,19 @@ router.get('/daily/:date', auth, async (req, res) => {
             }
         });
 
-        res.status(200).json({ success: true, message: '특정 날짜의 사용자의 하루 투자 정보를 조회했습니다.', data: userDailyInvestments });
+        // 시간과 분을 계산하여 userDailyInvestments의 각 요소에 반영합니다.
+        userDailyInvestments.forEach(investment => {
+            const totalMinutes = investment.hours * 60 + investment.minutes;
+            investment.hours = Math.floor(totalMinutes / 60);
+            investment.minutes = totalMinutes % 60;
+        });
+
+        res.status(200).json({ success: true, message: `특정 날짜(${selectedDate})의 사용자의 하루 투자 정보를 조회했습니다.`, data: userDailyInvestments });
     } catch (error) {
         console.error('Error fetching user daily investments:', error);
         res.status(500).json({ success: false, message: '특정 날짜의 사용자의 하루 투자 정보를 조회하는 데 실패했습니다.' });
     }
 });
+
 
 module.exports = router;
