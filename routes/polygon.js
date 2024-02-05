@@ -180,22 +180,24 @@ router.get('/read/:id', auth, async (req, res) => {
 
 
 router.get('/questions', auth, async (req, res) => {
-    try {
+    try{
         const user = req.user;
 
         // 사용자가 가지고 있는 elements를 가져옴
         const userElements = await user.getElements();
 
-        // 최종적으로 모든 질문을 담을 객체
-        const allQuestions = {};
+        const allQuestions = [];
 
-        // 각 Element에서 랜덤으로 하나의 question을 선택하여 allQuestions 객체에 추가
+        // 각 Element에서 랜덤으로 하나의 question을 선택하여 randomQuestions에 추가
         userElements.forEach(element => {
+            // 랜덤으로 선택된 질문을 담을 변수
             const randomQuestions = [];
+
             const questionsArray = element.questions;
 
             // 중복을 피하면서 다섯 개의 랜덤 질문을 뽑기
             while (randomQuestions.length < 5) {
+                // 남아있는 질문 중에서 랜덤으로 선택
                 const randomIndex = Math.floor(Math.random() * questionsArray.length);
                 const randomQuestion = questionsArray[randomIndex];
 
@@ -204,16 +206,20 @@ router.get('/questions', auth, async (req, res) => {
                 }
             }
 
-            // 요소 이름과 해당 요소에 대한 랜덤 질문들을 allQuestions 객체에 추가
-            allQuestions[element.name] = randomQuestions;
+            const oneElement = {
+                id: element.id,
+                element_name: element.name,
+                question_strings: randomQuestions
+            };
+
+            allQuestions.push(oneElement);
         });
 
-        res.status(200).json({ success: true, message: "만족도 질문 생성 성공", elements: allQuestions });
+        res.status(200).json({ success: true, elements: allQuestions });
     } catch (error) {
         res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
     }
-});
-
+})
 
 
 module.exports = router;
