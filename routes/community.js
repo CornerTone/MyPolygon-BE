@@ -41,7 +41,6 @@ router.post('/create', auth, async(req, res) => {
 
 })
 
-// 카테고리 별 커뮤니티 조회
 router.get('/read-category/:id', auth, async (req, res) => {
     const categoryId = req.params.id;
     const category = await Element.findByPk(categoryId);
@@ -55,7 +54,7 @@ router.get('/read-category/:id', auth, async (req, res) => {
                     as: 'categories',
                     through: { attributes: [] },
                     where: { id: category.id },
-                    attributes: [] 
+                    attributes: ['id'] // categories 필드 선택 (id와 name)
                 }
             ]
         });
@@ -64,12 +63,13 @@ router.get('/read-category/:id', auth, async (req, res) => {
             return res.status(404).json({ success: false, message: '해당 카테고리에 글이 없습니다.' });
         }
 
-        return res.status(200).json({ success: true, categoryId:category.id , categoryName: category.name, communities: communities });
+        return res.status(200).json({ success: true, categoryId: category.id, categoryName: category.name, communities: communities });
     } catch (error) {
         console.error(error);
         res.status(500).json({ success: false, message: `서버 오류 발생 ${error.message}` });
     }
 });
+
 
 // 전체 커뮤니티 조회
 router.get('/read-category', auth, async (req, res) => {
