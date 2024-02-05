@@ -96,4 +96,25 @@ router.get('/daily', auth, async (req, res) => {
 });
 
 
+// GET 요청을 통해 특정 날짜의 사용자의 하루 투자 정보를 조회하는 라우터
+router.get('/daily/:date', auth, async (req, res) => {
+    try {
+        const userId = req.user.id;
+        const selectedDate = req.params.date;
+
+        // DailyInvestment 모델을 사용하여 현재 사용자의 특정 날짜의 하루 투자 정보를 조회
+        const userDailyInvestments = await DailyInvestment.findAll({
+            where: {
+                user_id: userId,
+                activityDate: selectedDate // 선택된 날짜에 해당하는 데이터를 조회
+            }
+        });
+
+        res.status(200).json({ success: true, message: '특정 날짜의 사용자의 하루 투자 정보를 조회했습니다.', data: userDailyInvestments });
+    } catch (error) {
+        console.error('Error fetching user daily investments for the selected date:', error);
+        res.status(500).json({ success: false, message: '특정 날짜의 사용자의 하루 투자 정보를 조회하는 데 실패했습니다.' });
+    }
+});
+
 module.exports = router;
