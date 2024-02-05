@@ -15,13 +15,24 @@ router.post('/save_daily', auth, async (req, res) => {
         const minutes = totalMinutes % 60;
 
         // DailyInvestment 모델을 사용하여 데이터베이스에 저장
-        const dailyInvestment = await DailyInvestment.create({
-            category,
-            hours,
-            minutes,
-            activityDate,
-            user_id: req.user.id // 로그인된 사용자의 ID를 저장
+        // 기존에 해당 날짜의 데이터가 있으면 덮어씌우도록 수정합니다.
+        const [dailyInvestment, created] = await DailyInvestment.findOrCreate({
+            where: {
+                category,
+                activityDate,
+                user_id: req.user.id // 로그인된 사용자의 ID를 저장
+            },
+            defaults: {
+                hours,
+                minutes
+            }
         });
+
+        if (!created) { // 이미 해당 날짜의 데이터가 존재하는 경우
+            dailyInvestment.hours = hours; // 시간을 새로운 값으로 덮어씌웁니다.
+            dailyInvestment.minutes = minutes; // 분도 새로운 값으로 덮어씌웁니다.
+            await dailyInvestment.save(); // 변경된 값을 저장합니다.
+        }
 
         res.status(201).json({ success: true, message: '하루의 투자 정보를 저장했습니다.', data: dailyInvestment });
     } catch (error) {
@@ -29,6 +40,7 @@ router.post('/save_daily', auth, async (req, res) => {
         res.status(500).json({ success: false, message: '하루의 투자 정보를 저장하는 데 실패했습니다.' });
     }
 });
+
 
 
 router.put('/rewrite_daily', auth, async (req, res) => {
@@ -59,10 +71,23 @@ router.put('/rewrite_daily', auth, async (req, res) => {
                 user_id: userId
             });
         } else {
-            // 투자 정보가 이미 존재하면 시간을 업데이트
-            dailyInvestment.hours = hours;
-            dailyInvestment.minutes = minutes;
-            await dailyInvestment.save();
+            // 투자 정보가 이미 존재하면 해당 정보를 삭제하고 새로운 정보를 저장
+            await DailyInvestment.destroy({
+                where: {
+                    user_id: userId,
+                    activityDate: activityDate,
+                    category: category
+                }
+            });
+
+            // 새로운 정보를 저장
+            dailyInvestment = await DailyInvestment.create({
+                category,
+                hours,
+                minutes,
+                activityDate,
+                user_id: userId
+            });
         }
 
         res.status(201).json({ success: true, message: '하루의 투자 정보가 수정되었습니다.', data: dailyInvestment });
@@ -71,6 +96,7 @@ router.put('/rewrite_daily', auth, async (req, res) => {
         res.status(500).json({ success: false, message: '하루의 투자 정보를 수정하는 데 실패했습니다.' });
     }
 });
+
 
 
 // // GET 요청을 통해 특정 사용자의 하루 투자 정보를 조회하는 라우터
@@ -108,7 +134,7 @@ router.get('/daily/:date', auth, async (req, res) => {
         endDate.setDate(endDate.getDate() + 1); // 선택된 날짜의 다음 날로 설정하여 하루 동안의 데이터를 조회합니다.
 
         // DailyInvestment 모델을 사용하여 현재 사용자의 선택된 날짜의 하루 투자 정보를 조회합니다.
-        const userDailyInvestments = await DailyInvestment.findAll({
+        let userDailyInvestments = await DailyInvestment.findAll({
             where: {
                 user_id: userId,
                 activityDate: {
@@ -117,8 +143,8 @@ router.get('/daily/:date', auth, async (req, res) => {
             }
         });
 
-        // 조회된 투자 정보를 수정하여 변경된 값을 반영합니다.
-        userDailyInvestments.forEach(async investment => {
+        // 요청에서 전달된 정보와 일치하는 항목을 찾아 투자 정보를 수정합니다.
+        for (let investment of userDailyInvestments) {
             // 조회된 투자 정보의 카테고리와 활동 날짜를 기반으로 요청에서 전달된 정보와 일치하는 항목을 찾습니다.
             if (investment.category === req.body.category && investment.activityDate === req.body.activityDate) {
                 // 요청에서 전달된 정보로 투자 시간을 갱신합니다.
@@ -126,6 +152,16 @@ router.get('/daily/:date', auth, async (req, res) => {
                 investment.minutes = req.body.totalMinutes % 60;
                 // 변경된 값을 데이터베이스에 저장합니다.
                 await investment.save();
+            }
+        }
+
+        // 수정된 정보를 다시 조회합니다.
+        userDailyInvestments = await DailyInvestment.findAll({
+            where: {
+                user_id: userId,
+                activityDate: {
+                    [Op.between]: [startDate, endDate] // 선택된 날짜와 다음 날 사이의 데이터를 조회합니다.
+                }
             }
         });
 
@@ -135,6 +171,7 @@ router.get('/daily/:date', auth, async (req, res) => {
         res.status(500).json({ success: false, message: '특정 날짜의 사용자의 하루 투자 정보를 조회하는 데 실패했습니다.' });
     }
 });
+
 
 
 module.exports = router;
