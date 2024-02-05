@@ -128,18 +128,11 @@ router.get('/daily/:date', auth, async (req, res) => {
         const userId = req.user.id;
         const selectedDate = req.params.date; // URL의 경로 파라미터로부터 날짜를 추출합니다.
 
-        // 선택된 날짜의 시작과 끝을 설정합니다.
-        const startDate = new Date(selectedDate);
-        const endDate = new Date(selectedDate);
-        endDate.setDate(endDate.getDate() + 1); // 선택된 날짜의 다음 날로 설정하여 하루 동안의 데이터를 조회합니다.
-
         // DailyInvestment 모델을 사용하여 현재 사용자의 선택된 날짜의 하루 투자 정보를 조회합니다.
         let userDailyInvestments = await DailyInvestment.findAll({
             where: {
                 user_id: userId,
-                activityDate: {
-                    [Op.between]: [startDate, endDate] // 선택된 날짜와 다음 날 사이의 데이터를 조회합니다.
-                }
+                activityDate: selectedDate
             }
         });
 
@@ -159,9 +152,7 @@ router.get('/daily/:date', auth, async (req, res) => {
         userDailyInvestments = await DailyInvestment.findAll({
             where: {
                 user_id: userId,
-                activityDate: {
-                    [Op.between]: [startDate, endDate] // 선택된 날짜와 다음 날 사이의 데이터를 조회합니다.
-                }
+                activityDate: selectedDate
             }
         });
 
