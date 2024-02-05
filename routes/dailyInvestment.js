@@ -96,7 +96,6 @@ router.put('/rewrite_daily', auth, async (req, res) => {
 // });
 
 
-// GET 요청을 통해 특정 사용자의 하루 투자 정보를 조회하는 라우터
 router.get('/daily/:date', auth, async (req, res) => {
     try {
         const userId = req.user.id;
@@ -118,18 +117,21 @@ router.get('/daily/:date', auth, async (req, res) => {
         });
 
         // 시간과 분을 계산하여 userDailyInvestments의 각 요소에 반영합니다.
-        userDailyInvestments.forEach(investment => {
+        const modifiedInvestments = userDailyInvestments.map(investment => {
             const totalMinutes = investment.hours * 60 + investment.minutes;
-            investment.hours = Math.floor(totalMinutes / 60);
-            investment.minutes = totalMinutes % 60;
+            const hours = Math.floor(totalMinutes / 60);
+            const minutes = totalMinutes % 60;
+            return { ...investment.toJSON(), hours, minutes };
         });
 
-        res.status(200).json({ success: true, message: `특정 날짜(${selectedDate})의 사용자의 하루 투자 정보를 조회했습니다.`, data: userDailyInvestments });
+        res.status(200).json({ success: true, message: `특정 날짜(${selectedDate})의 사용자의 하루 투자 정보를 조회했습니다.`, data: modifiedInvestments });
     } catch (error) {
         console.error('Error fetching user daily investments:', error);
         res.status(500).json({ success: false, message: '특정 날짜의 사용자의 하루 투자 정보를 조회하는 데 실패했습니다.' });
     }
 });
+
+
 
 
 module.exports = router;
