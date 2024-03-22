@@ -35,6 +35,9 @@
 #### 📌 커뮤니티
 나만의 다각형을 이용하는 다른 사용자들과 고민을 나눌 수 있는 기능입니다. 건강, 학업, 인간관계 등 앞서 말한 요소들 중 카테고리를 선택하여 글을 작성할 수 있고, 남들에게 말하지 못했던 고민들을 익명으로 공유할 수 있는 공간입니다.
 
+## ERD
+<img width="1146" alt="image" src="https://github.com/CornerTone/MyPolygon-BE/assets/128278212/2ca1ed31-9aac-407e-bd6b-c65e4a7f4ecc">
+
  <br> <br>
 ### ✔️Frond-end
 <img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=black"><img src="https://img.shields.io/badge/css-1572B6?style=for-the-badge&logo=css3&logoColor=white"> 
